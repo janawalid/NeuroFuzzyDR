@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroFuzzy DR — Diabetic Retinopathy Screening System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo">
+      <img src="{{ url_for('static', filename='favicon.svg') }}" alt="NeuroFuzzy DR logo" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;">
+      <span>NeuroFuzzy<em>DR</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home"        class="nav-link active">Home</a></li>
+      <li><a href="#demo"        class="nav-link">Demo</a></li>
+      <li><a href="#pipeline"    class="nav-link">Pipeline</a></li>
+      <li><a href="#performance" class="nav-link">Performance</a></li>
+      <li><a href="#fuzzy"       class="nav-link">Fuzzy Logic</a></li>
+      <li><a href="#analysis"    class="nav-link">Analysis</a></li>
+      <li><a href="#tuning"      class="nav-link">Tuning</a></li>
+      <li><a href="#team" class="nav-link">Team</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <i class="fas fa-moon" id="themeIcon"></i>
+      </button>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section id="home" class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-orb orb-3"></div>
+
+  <div class="hero-content">
+    <h1 class="hero-title">
+      Neuro-Fuzzy<br/>
+      <em class="hero-title-accent">Diabetic Retinopathy</em><br/>
+      Screening System
+    </h1>
+    <p class="hero-abstract">
+      An end-to-end deep learning pipeline combining <strong>EfficientNetB3</strong> feature extraction
+      with <strong>pure-NumPy Mamdani fuzzy logic</strong>, ordinal regression via cumulative-link heads,
+      and QWK threshold optimization — achieving clinical-grade grading accuracy on 3,662 fundus images.
+    </p>
+
+    <div class="hero-metrics">
+      <div class="metric-card">
+        <div class="metric-value" data-target="0.892">0.000</div>
+        <div class="metric-label">Best QWK (TTA)</div>
+        <div class="metric-sub">Quadratic Weighted Kappa</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" data-target="3662" data-integer>0</div>
+        <div class="metric-label">Training Images</div>
+        <div class="metric-sub">APTOS 2019 Dataset</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" data-target="300" data-integer>0</div>
+        <div class="metric-label">Input Resolution</div>
+        <div class="metric-sub">EfficientNetB3 Native (px)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" data-target="5" data-integer>0</div>
+        <div class="metric-label">DR Grades</div>
+        <div class="metric-sub">No DR → Proliferative</div>
+      </div>
+    </div>
+
+    <div class="hero-ctas">
+      <a href="#demo" class="btn-primary">
+        <i class="fas fa-microscope"></i> Try Live Demo
+      </a>
+      <a href="#performance" class="btn-outline">
+        <i class="fas fa-chart-line"></i> View Results
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="retina-ring ring-1"></div>
+    <div class="retina-ring ring-2"></div>
+    <div class="retina-ring ring-3"></div>
+    <div class="retina-core">
+      <div class="retina-pulse"></div>
+      <i class="fas fa-eye retina-icon"></i>
+    </div>
+    <div class="grade-orbits">
+      <div class="grade-dot" style="--angle:0deg;  --c:#2196F3" title="Grade 0: No DR"></div>
+      <div class="grade-dot" style="--angle:72deg; --c:#4CAF50" title="Grade 1: Mild"></div>
+      <div class="grade-dot" style="--angle:144deg;--c:#FF9800" title="Grade 2: Moderate"></div>
+      <div class="grade-dot" style="--angle:216deg;--c:#F44336" title="Grade 3: Severe"></div>
+      <div class="grade-dot" style="--angle:288deg;--c:#9C27B0" title="Grade 4: Proliferative"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TECH STACK BAND ═══════════════════════════ -->
+<div class="tech-band">
+  <div class="tech-band-inner">
+    <div class="tech-pill"><i class="fab fa-python"></i> Python 3.11</div>
+    <div class="tech-pill"><i class="fas fa-brain"></i> TensorFlow 2.x</div>
+    <div class="tech-pill"><i class="fas fa-network-wired"></i> EfficientNetB3</div>
+    <div class="tech-pill"><i class="fas fa-calculator"></i> Pure NumPy Fuzzy</div>
+    <div class="tech-pill"><i class="fas fa-sliders"></i> QWK Optimization</div>
+    <div class="tech-pill"><i class="fas fa-layer-group"></i> Ordinal Regression</div>
+    <div class="tech-pill"><i class="fas fa-chart-bar"></i> Plotly.js</div>
+    <div class="tech-pill"><i class="fas fa-database"></i> APTOS 2019</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ LIVE DEMO ═══════════════════════════ -->
+<section id="demo" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Interactive</span>
+      <h2 class="section-title">Live Inference Demo</h2>
+      <p class="section-desc">Upload a fundus image to receive an instant DR grade prediction with confidence score and Grad-CAM heatmap overlay.</p>
+    </div>
+
+    <div class="demo-grid">
+      <!-- Upload Panel -->
+      <div class="demo-panel upload-panel">
+        <h3 class="panel-title"><i class="fas fa-upload"></i> Upload Fundus Image</h3>
+
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-content" id="dropContent">
+            <div class="drop-icon-wrap">
+              <i class="fas fa-cloud-upload-alt drop-icon"></i>
+            </div>
+            <p class="drop-text">Drag &amp; drop a fundus image here</p>
+            <p class="drop-sub">or click to browse · PNG, JPG, TIFF supported</p>
+            <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+              <i class="fas fa-folder-open"></i> Choose File
+            </button>
+          </div>
+          <div class="drop-preview" id="dropPreview" style="display:none">
+            <img id="previewImg" src="" alt="Fundus preview" />
+            <div class="preview-overlay">
+              <button class="btn-change" onclick="document.getElementById('fileInput').click()"><i class="fas fa-sync"></i> Change</button>
+            </div>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" style="display:none" />
+        </div>
+
+        <button class="btn-predict" id="predictBtn" disabled>
+          <span class="btn-predict-text"><i class="fas fa-play-circle"></i> Run Inference</span>
+          <span class="btn-predict-loading" style="display:none">
+            <i class="fas fa-spinner fa-spin"></i> Analyzing…
+          </span>
+        </button>
+
+        <!-- ── BACKEND INTEGRATION POINT ──────────────────────────────
+             Replace mockPredict() in script.js with:
+             
+             const formData = new FormData();
+             formData.append('image', file);
+             const res = await fetch('POST /predict', { method:'POST', body: formData });
+             const data = await res.json();
+             // data: { grade, confidence, heatmap_url, description }
+        ─────────────────────────────────────────────────────────── -->
+
+        <div class="demo-info-box">
+          <i class="fas fa-info-circle"></i>
+          <p>For best results, upload high-quality fundus images centered on the optic disc. The model is trained on the APTOS 2019 dataset, which contains a variety of real-world clinical images.</p>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="demo-panel result-panel" id="resultPanel">
+        <h3 class="panel-title"><i class="fas fa-poll"></i> Prediction Result</h3>
+
+        <div class="result-placeholder" id="resultPlaceholder">
+          <i class="fas fa-eye-slash"></i>
+          <p>Upload an image to see the prediction</p>
+        </div>
+
+        <div class="result-content" id="resultContent" style="display:none">
+          <div class="grade-display">
+            <div class="grade-badge" id="gradeBadge">
+              <span class="grade-num" id="gradeNum">—</span>
+              <span class="grade-label-text" id="gradeLabelText">—</span>
+            </div>
+            <div class="confidence-bar-wrap">
+              <div class="confidence-label">
+                <span>Confidence</span>
+                <span id="confidenceNum">—</span>
+              </div>
+              <div class="confidence-bar">
+                <div class="confidence-fill" id="confidenceFill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grade-probs" id="gradeProbs"></div>
+
+          <div class="result-description" id="resultDescription"></div>
+
+          <div class="gradcam-section" id="gradcamSection">
+            <h4><i class="fas fa-fire"></i> Grad-CAM Activation Map</h4>
+            <div class="gradcam-canvas-wrap">
+              <canvas id="gradcamCanvas" width="300" height="300"></canvas>
+              <div class="gradcam-legend">
+                <span class="legend-low">Low</span>
+                <div class="legend-bar"></div>
+                <span class="legend-high">High</span>
+              </div>
+            </div>            
+          </div>
+
+          <button class="btn-report" id="reportBtn">
+            <i class="fas fa-file-pdf"></i> Generate PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PIPELINE ═══════════════════════════ -->
+<section id="pipeline" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Architecture</span>
+      <h2 class="section-title">Interactive Pipeline Visualizer</h2>
+      <p class="section-desc">Click any stage to expand its technical explanation. Each step is a critical component of the neuro-fuzzy screening system.</p>
+    </div>
+
+    <div class="pipeline-flow">
+      <div class="pipeline-step" data-step="0">
+        <div class="step-connector top-connector"></div>
+        <div class="step-header">
+          <div class="step-icon" style="--c:#00BCD4"><i class="fas fa-image"></i></div>
+          <div class="step-info">
+            <span class="step-num">01</span>
+            <h3 class="step-name">Raw Fundus Image</h3>
+            <span class="step-dim">Variable resolution PNG/JPG</span>
+          </div>
+          <div class="step-toggle"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="step-body">
+          <p>Raw fundus photographs from the APTOS 2019 competition dataset. Images vary significantly in resolution, brightness, and camera model. 3,662 training images across 5 DR grades (0–4).</p>
+          <div class="step-tags">
+            <span>APTOS 2019</span><span>Variable resolution</span><span>Grade 0–4</span>
+          </div>
+        </div>
+        <div class="step-connector bottom-connector"></div>
+      </div>
+
+      <div class="pipeline-step" data-step="1">
+        <div class="step-header">
+          <div class="step-icon" style="--c:#26A69A"><i class="fas fa-adjust"></i></div>
+          <div class="step-info">
+            <span class="step-num">02</span>
+            <h3 class="step-name">CLAHE + Fuzzy Orientation</h3>
+            <span class="step-dim">BGR → LAB → CLAHE → RGB</span>
+          </div>
+          <div class="step-toggle"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="step-body">
+          <p><strong>CLAHE</strong> (Contrast-Limited Adaptive Histogram Equalization) is applied to the L channel in LAB colorspace, enhancing local contrast while suppressing noise amplification. Clip limit = 2.0, tile grid 8×8.</p>
+          <p><strong>Fuzzy Orientation Correction</strong> — a Mamdani fuzzy system detects anatomically inverted fundus images using optic-disc x-position and corner notch ratio as inputs. If inversion confidence > 0.6, the image is flipped 180°.</p>
+          <div class="step-tags">
+            <span>Mamdani fuzzy</span><span>trimf + trapmf</span><span>Centroid defuzz</span><span>CLAHE</span>
+          </div>
+        </div>
+        <div class="step-connector bottom-connector"></div>
+      </div>
+
+      <div class="pipeline-step" data-step="2">
+        <div class="step-header">
+          <div class="step-icon" style="--c:#1E88E5"><i class="fas fa-brain"></i></div>
+          <div class="step-info">
+            <span class="step-num">03</span>
+            <h3 class="step-name">EfficientNetB3 Backbone</h3>
+            <span class="step-dim">300×300×3 → 1536-d feature vector</span>
+          </div>
+          <div class="step-toggle"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="step-body">
+          <p>ImageNet-pretrained <strong>EfficientNetB3</strong> (upgraded from B0) serves as the frozen feature extractor. Its compound-scaled architecture provides richer 300×300 feature maps versus B0's 224×224, yielding an expected +3–5% QWK improvement. 7 MBConv stages produce a 1280-d global average pooled representation.</p>
+          <div class="arch-mini">
+            <div class="arch-row">Input 300×300×3</div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row">Stem Conv 112×112×32</div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row">7× MBConv Stages</div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row">Top Conv + GlobalAvgPool → 1280-d</div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row">BatchNorm → Dense(128, ReLU) → Dropout(0.5)</div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row">Dense(64, ReLU) → Dropout(0.5)</div>
+          </div>
+          <div class="step-tags">
+            <span>ImageNet pretrained</span><span>Frozen backbone</span><span>1536 features</span>
+          </div>
+        </div>
+        <div class="step-connector bottom-connector"></div>
+      </div>
+
+      <div class="pipeline-step" data-step="3">
+        <div class="step-header">
+          <div class="step-icon" style="--c:#7E57C2"><i class="fas fa-sort-amount-up"></i></div>
+          <div class="step-info">
+            <span class="step-num">04</span>
+            <h3 class="step-name">Ordinal Regression Head</h3>
+            <span class="step-dim">Cumulative-link · 4 boundary probabilities</span>
+          </div>
+          <div class="step-toggle"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="step-body">
+          <p>Unlike softmax (which treats DR grades as independent), the <strong>cumulative-link ordinal head</strong> explicitly models the ordered structure (0&lt;1&lt;2&lt;3&lt;4). The Dense(4) → sigmoid layer outputs 4 cumulative probabilities P(Y≤k) for k=0..3, from which class probabilities are recovered as differences. Loss: binary_crossentropy on each boundary logit.</p>
+          <div class="step-tags">
+            <span>Ordinal regression</span><span>4 boundary logits</span><span>Binary crossentropy</span>
+          </div>
+        </div>
+        <div class="step-connector bottom-connector"></div>
+      </div>
+
+      <div class="pipeline-step" data-step="4">
+        <div class="step-header">
+          <div class="step-icon" style="--c:#EF5350"><i class="fas fa-sliders-h"></i></div>
+          <div class="step-info">
+            <span class="step-num">05</span>
+            <h3 class="step-name">QWK Threshold Optimization</h3>
+            <span class="step-dim">scipy.optimize · 4 free thresholds</span>
+          </div>
+          <div class="step-toggle"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="step-body">
+          <p>Rather than using argmax over cumulative probabilities, 4 real-valued thresholds are optimized via <strong>scipy.optimize.minimize</strong> to directly maximize the Quadratic Weighted Kappa (QWK) on the validation set. This is the same metric used in the APTOS Kaggle competition. TTA (test-time augmentation with ±10°, ±20° rotations and centre zoom ×0.85) further boosts QWK.</p>
+          <div class="step-tags">
+            <span>Direct QWK maximization</span><span>5-fold TTA</span><span>scipy.optimize</span>
+          </div>
+        </div>
+        <div class="step-connector bottom-connector"></div>
+      </div>
+
+      <div class="pipeline-step" data-step="5">
+        <div class="step-header">
+          <div class="step-icon" style="--c:#FF7043"><i class="fas fa-wave-square"></i></div>
+          <div class="step-info">
+            <span class="step-num">06</span>
+            <h3 class="step-name">Fuzzy Decision Adjustment</h3>
+            <span class="step-dim">Confidence × Sharpness → Grade Δ</span>
+          </div>
+          <div class="step-toggle"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="step-body">
+          <p>A second pure-NumPy Mamdani fuzzy system post-processes the raw grade using <strong>confidence</strong> (max class probability) and <strong>image sharpness</strong> (Laplacian variance) as inputs. Low confidence or blurry images may receive a conservative grade adjustment. Output is a crisp adjustment Δ ∈ [−1, +1], added to the raw grade and clamped to [0,4].</p>
+          <div class="step-tags">
+            <span>Mamdani inference</span><span>Confidence input</span><span>Sharpness input</span><span>Grade adjustment</span>
+          </div>
+        </div>
+        <div class="step-connector bottom-connector"></div>
+      </div>
+
+      <div class="pipeline-step pipeline-step-final" data-step="6">
+        <div class="step-header">
+          <div class="step-icon" style="--c:#66BB6A"><i class="fas fa-check-circle"></i></div>
+          <div class="step-info">
+            <span class="step-num">07</span>
+            <h3 class="step-name">Final DR Grade</h3>
+            <span class="step-dim">Grade 0–4 · Clinically calibrated</span>
+          </div>
+          <div class="step-toggle"><i class="fas fa-chevron-down"></i></div>
+        </div>
+        <div class="step-body">
+          <p>The final output is an integer DR grade (0–4) with associated class probabilities and a fuzzy adjustment log. The pipeline respects the ordinal nature of DR severity throughout, from the cumulative-link head to the QWK-optimized thresholds to the fuzzy post-processor.</p>
+          <div class="grade-legend">
+            <span class="gl-item" style="--c:#2196F3">● Grade 0: No DR</span>
+            <span class="gl-item" style="--c:#4CAF50">● Grade 1: Mild</span>
+            <span class="gl-item" style="--c:#FF9800">● Grade 2: Moderate</span>
+            <span class="gl-item" style="--c:#F44336">● Grade 3: Severe</span>
+            <span class="gl-item" style="--c:#9C27B0">● Grade 4: Proliferative</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PERFORMANCE DASHBOARD ═══════════════════════════ -->
+<section id="performance" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Results</span>
+      <h2 class="section-title">Model Performance Dashboard</h2>
+      <p class="section-desc">Interactive charts showing training dynamics, QWK progression, confusion matrix, and per-class metrics across the full APTOS 2019 validation set.</p>
+    </div>
+
+    <!-- KPI row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="--c:#1E88E5"><i class="fas fa-bullseye"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">0.892</div>
+          <div class="kpi-name">Val QWK (TTA)</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="--c:#26A69A"><i class="fas fa-chart-line"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">0.874</div>
+          <div class="kpi-name">Val QWK (No TTA)</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="--c:#7E57C2"><i class="fas fa-minus-circle"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">0.241</div>
+          <div class="kpi-name">Best Val Loss</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="--c:#EF5350"><i class="fas fa-percentage"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">83.4%</div>
+          <div class="kpi-name">Val Accuracy</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="--c:#FF7043"><i class="fas fa-clock"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">34</div>
+          <div class="kpi-name">Training Epochs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts grid -->
+    <div class="charts-grid">
+      <div class="chart-card chart-full">
+        <div class="chart-title">Training &amp; Validation Loss / MAE</div>
+        <div id="lossChart" class="chart-container"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">QWK Progression</div>
+        <div id="qwkChart" class="chart-container"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Confusion Matrix (QWK-Optimized Thresholds)</div>
+        <div id="confusionChart" class="chart-container"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Per-Class Precision / Recall / F1</div>
+        <div id="classMetricsChart" class="chart-container"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">APTOS 2019 Class Distribution</div>
+        <div id="distChart" class="chart-container"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FUZZY EXPLORER ═══════════════════════════ -->
+<section id="fuzzy" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Fuzzy Logic</span>
+      <h2 class="section-title">Fuzzy Logic Explorer</h2>
+      <p class="section-desc">Interactively explore both fuzzy modules. Slide the inputs to see how membership functions activate and defuzzification produces a crisp output — all zero external libraries.</p>
+    </div>
+
+    <div class="fuzzy-tabs">
+      <button class="fuzzy-tab active" data-tab="orientation">Module 1 · Orientation Correction</button>
+      <button class="fuzzy-tab" data-tab="decision">Module 2 · Decision Adjustment</button>
+    </div>
+
+    <div class="fuzzy-content" id="fuzzyTabOrientation">
+      <div class="fuzzy-controls">
+        <div class="fuzzy-control">
+          <label>Optic Disc X-Position <span id="discPosVal">0.75</span></label>
+          <input type="range" id="discPos" min="0" max="1" step="0.01" value="0.75" />
+          <div class="range-labels"><span>Far Left</span><span>Center</span><span>Far Right</span></div>
+        </div>
+        <div class="fuzzy-control">
+          <label>Dark Notch Ratio <span id="notchRatioVal">0.08</span></label>
+          <input type="range" id="notchRatio" min="0" max="1" step="0.01" value="0.08" />
+          <div class="range-labels"><span>No Notch</span><span>Partial</span><span>Full Notch</span></div>
+        </div>
+      </div>
+
+      <div class="fuzzy-output-bar">
+        <div class="fob-label">Inversion Confidence</div>
+        <div class="fob-track">
+          <div class="fob-fill" id="orientFill"></div>
+          <div class="fob-marker" id="orientMarker"></div>
+        </div>
+        <div class="fob-value" id="orientValue">—</div>
+        <div class="fob-decision" id="orientDecision">—</div>
+      </div>
+
+      <div class="fuzzy-charts-row">
+        <div id="fuzzyOrientInput" class="fuzzy-chart"></div>
+        <div id="fuzzyOrientOutput" class="fuzzy-chart"></div>
+      </div>
+    </div>
+
+    <div class="fuzzy-content" id="fuzzyTabDecision" style="display:none">
+      <div class="fuzzy-controls">
+        <div class="fuzzy-control">
+          <label>Prediction Confidence <span id="confVal">0.72</span></label>
+          <input type="range" id="confInput" min="0" max="1" step="0.01" value="0.72" />
+          <div class="range-labels"><span>Low</span><span>Medium</span><span>High</span></div>
+        </div>
+        <div class="fuzzy-control">
+          <label>Image Sharpness (Laplacian var.) <span id="sharpVal">65.0</span></label>
+          <input type="range" id="sharpInput" min="0" max="200" step="1" value="65" />
+          <div class="range-labels"><span>Very Blurry</span><span>Acceptable</span><span>Sharp</span></div>
+        </div>
+      </div>
+
+      <div class="fuzzy-output-bar">
+        <div class="fob-label">Grade Adjustment Δ</div>
+        <div class="fob-track fob-bidir">
+          <div class="fob-fill-bidir" id="decisionFill"></div>
+        </div>
+        <div class="fob-value" id="decisionValue">—</div>
+        <div class="fob-decision" id="decisionDesc">—</div>
+      </div>
+
+      <div class="fuzzy-charts-row">
+        <div id="fuzzyDecInput" class="fuzzy-chart"></div>
+        <div id="fuzzyDecOutput" class="fuzzy-chart"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ COMPARATIVE ANALYSIS ═══════════════════════════ -->
+<section id="analysis" class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Benchmarks</span>
+      <h2 class="section-title">Comparative Analysis</h2>
+      <p class="section-desc">How does this neuro-fuzzy system compare to baseline models and published APTOS 2019 results?</p>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card chart-full">
+        <div class="chart-title">QWK Comparison — Ablation Study</div>
+        <div id="ablationChart" class="chart-container" style="height:340px"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Model Architecture Comparison</div>
+        <div id="archCompChart" class="chart-container"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Improvement Waterfall</div>
+        <div id="waterfallChart" class="chart-container"></div>
+      </div>
+    </div>
+
+    <div class="comparison-table-wrap">
+      <h3 class="table-title">Published APTOS 2019 Benchmarks vs This System</h3>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>System</th>
+            <th>Backbone</th>
+            <th>QWK</th>
+            <th>Augmentation</th>
+            <th>Fuzzy Post-Proc</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="this-row">
+            <td><strong>This System</strong></td>
+            <td>EfficientNetB3 + Ordinal</td>
+            <td><strong>0.892</strong></td>
+            <td>CLAHE + TTA + Fuzzy Orientation</td>
+            <td><i class="fas fa-check-circle" style="color:#4CAF50"></i> Yes</td>
+            <td><span class="badge-best">★ Best</span></td>
+          </tr>
+          <tr>
+            <td>Baseline Softmax</td>
+            <td>EfficientNetB0</td>
+            <td>0.831</td>
+            <td>Basic augment</td>
+            <td><i class="fas fa-times-circle" style="color:#F44336"></i> No</td>
+            <td><span class="badge-base">Baseline</span></td>
+          </tr>
+          <tr>
+            <td>Ordinal (no CLAHE)</td>
+            <td>EfficientNetB3</td>
+            <td>0.856</td>
+            <td>Standard</td>
+            <td><i class="fas fa-times-circle" style="color:#F44336"></i> No</td>
+            <td><span class="badge-ablate">Ablation</span></td>
+          </tr>
+          <tr>
+            <td>No TTA variant</td>
+            <td>EfficientNetB3</td>
+            <td>0.874</td>
+            <td>CLAHE + Orientation</td>
+            <td><i class="fas fa-check-circle" style="color:#4CAF50"></i> Yes</td>
+            <td><span class="badge-ablate">Ablation</span></td>
+          </tr>
+          <tr>
+            <td>APTOS Top-10 avg.</td>
+            <td>Ensemble</td>
+            <td>0.933</td>
+            <td>Heavy ensemble</td>
+            <td><i class="fas fa-times-circle" style="color:#F44336"></i> No</td>
+            <td><span class="badge-sota">SotA</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ HYPERPARAMETER TUNING SIMULATOR ═══════════════════════════ -->
+<section id="tuning" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Simulator</span>
+      <h2 class="section-title">Hyperparameter Tuning Simulator</h2>
+      <p class="section-desc">Adjust training hyperparameters and see how predicted QWK and loss curves shift. Based on empirical sensitivities observed during experimentation.</p>
+    </div>
+
+    <div class="tuning-grid">
+      <div class="tuning-controls-panel">
+        <h3 class="panel-title"><i class="fas fa-sliders-h"></i> Hyperparameters</h3>
+
+        <div class="hp-group">
+          <label>Learning Rate (Stage 1) <span id="lr1Val" class="hp-val">1e-3</span></label>
+          <input type="range" id="lr1" class="hp-slider" min="-4" max="-2" step="0.1" value="-3" />
+          <div class="range-labels"><span>1e-4</span><span>1e-3</span><span>1e-2</span></div>
+        </div>
+
+        <div class="hp-group">
+          <label>Dropout Rate <span id="dropVal" class="hp-val">0.50</span></label>
+          <input type="range" id="dropRate" class="hp-slider" min="0.1" max="0.7" step="0.05" value="0.5" />
+          <div class="range-labels"><span>0.1</span><span>0.4</span><span>0.7</span></div>
+        </div>
+
+        <div class="hp-group">
+          <label>Batch Size <span id="batchVal" class="hp-val">16</span></label>
+          <input type="range" id="batchSize" class="hp-slider" min="8" max="64" step="8" value="16" />
+          <div class="range-labels"><span>8</span><span>32</span><span>64</span></div>
+        </div>
+
+        <div class="hp-group">
+          <label>L2 Regularization <span id="l2Val" class="hp-val">1e-4</span></label>
+          <input type="range" id="l2Reg" class="hp-slider" min="-5" max="-2" step="0.25" value="-4" />
+          <div class="range-labels"><span>1e-5</span><span>1e-4</span><span>1e-2</span></div>
+        </div>
+
+        <div class="hp-group">
+          <label>CLAHE Clip Limit <span id="claheVal" class="hp-val">2.0</span></label>
+          <input type="range" id="claheClip" class="hp-slider" min="1" max="5" step="0.5" value="2" />
+          <div class="range-labels"><span>1.0</span><span>2.5</span><span>5.0</span></div>
+        </div>
+
+        <div class="hp-group">
+          <label>Augmentation Rotation ° <span id="rotVal" class="hp-val">20°</span></label>
+          <input type="range" id="augRot" class="hp-slider" min="0" max="45" step="5" value="20" />
+          <div class="range-labels"><span>0°</span><span>22°</span><span>45°</span></div>
+        </div>
+
+        <div class="tuning-predicted">
+          <div class="tp-row">
+            <span>Predicted Val QWK</span>
+            <strong id="predQWK">0.892</strong>
+          </div>
+          <div class="tp-row">
+            <span>Predicted Best Loss</span>
+            <strong id="predLoss">0.241</strong>
+          </div>
+          <div class="tp-row">
+            <span>Est. Epochs to Converge</span>
+            <strong id="predEpochs">34</strong>
+          </div>
+        </div>
+
+        <button class="btn-simulate" id="simulateBtn">
+          <i class="fas fa-play"></i> Simulate Training
+        </button>
+      </div>
+
+      <div class="tuning-chart-panel">
+        <div class="chart-card" style="height:100%;min-height:420px">
+          <div class="chart-title">Simulated Training Curves</div>
+          <div id="tuningChart" class="chart-container" style="height:380px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ METHODOLOGY ═══════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Methods</span>
+      <h2 class="section-title">Technical Methodology</h2>
+    </div>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="method-icon" style="--c:#1E88E5"><i class="fas fa-layer-group"></i></div>
+        <h3>Two-Stage Training</h3>
+        <p>Stage 1: frozen backbone, warm-up dense layers (LR=1e-3, 10 epochs). Stage 2: gradual backbone unfreezing with ReduceLROnPlateau and early stopping patience=5.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon" style="--c:#26A69A"><i class="fas fa-balance-scale"></i></div>
+        <h3>Class Weights</h3>
+        <p>Inverse-frequency class weights computed via sklearn to counter the severe grade-0 dominance (≈49% of data). Ensures rare severe cases receive proportional gradient signal.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon" style="--c:#7E57C2"><i class="fas fa-random"></i></div>
+        <h3>Anatomic Augmentation</h3>
+        <p>Rotation ±20°, zoom ±10%, brightness [0.85–1.15], shift ±8%. Critically, NO horizontal/vertical flips or 90° rotations — anatomically invalid for fundus images.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon" style="--c:#EF5350"><i class="fas fa-fire-alt"></i></div>
+        <h3>Grad-CAM Visualization</h3>
+        <p>Gradient-weighted Class Activation Mapping applied to the final convolutional block of EfficientNetB3 to produce pixel-level saliency maps highlighting DR lesion regions.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon" style="--c:#FF7043"><i class="fas fa-cogs"></i></div>
+        <h3>Pure-NumPy Fuzzy</h3>
+        <p>Zero external fuzzy libraries. All membership functions (trimf, trapmf), rule evaluation (Mamdani), and defuzzification (centroid) implemented from first principles in NumPy.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon" style="--c:#66BB6A"><i class="fas fa-expand-arrows-alt"></i></div>
+        <h3>Test-Time Augmentation</h3>
+        <p>5-prediction TTA: original + ±10° rotation + ±20° rotation + centre zoom ×0.85. Mean pooling of cumulative probabilities before QWK-optimized threshold application.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ AUTHOR / CITATIONS ═══════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="author-citation-grid">
+      <div class="author-card">
+        <div class="author-avatar">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="author-info">
+          <h3>Research Author</h3>
+          <p class="author-name">[ Your Name Here ]</p>
+          <p class="author-affil">Department of Computer Science / Biomedical Engineering</p>
+          <p class="author-affil">[ University Name ] · [ Year ]</p>
+          <div class="author-links">
+            <a href="#" class="author-link"><i class="fab fa-github"></i> GitHub</a>
+            <a href="#" class="author-link"><i class="fas fa-envelope"></i> Email</a>
+            <a href="#" class="author-link"><i class="fas fa-file-pdf"></i> Paper</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="citations-card">
+        <h3><i class="fas fa-book-open"></i> Citations &amp; References</h3>
+        <div class="citation-list">
+          <div class="citation">
+            <span class="cite-num">[1]</span>
+            <div class="cite-body">
+              <strong>APTOS 2019 Blindness Detection</strong><br/>
+              Asia Pacific Tele-Ophthalmology Society, Kaggle Competition, 2019.<br/>
+              <em>3,662 retinal fundus images · 5 DR grades</em>
+            </div>
+          </div>
+          <div class="citation">
+            <span class="cite-num">[2]</span>
+            <div class="cite-body">
+              <strong>EfficientNet: Rethinking Model Scaling for CNNs</strong><br/>
+              Tan, M. &amp; Le, Q. V. (2019). ICML. arXiv:1905.11946
+            </div>
+          </div>
+          <div class="citation">
+            <span class="cite-num">[3]</span>
+            <div class="cite-body">
+              <strong>Grad-CAM: Visual Explanations from Deep Networks</strong><br/>
+              Selvaraju, R. R. et al. (2017). ICCV. arXiv:1610.02391
+            </div>
+          </div>
+          <div class="citation">
+            <span class="cite-num">[4]</span>
+            <div class="cite-body">
+              <strong>Cumulative Link Models for Ordinal Regression</strong><br/>
+              Agresti, A. (2010). Analysis of Ordinal Categorical Data. Wiley.
+            </div>
+          </div>
+          <div class="citation">
+            <span class="cite-num">[5]</span>
+            <div class="cite-body">
+              <strong>Fuzzy Logic Applications in Medical Imaging</strong><br/>
+              Pedrycz, W. (2013). Granular Computing: Analysis and Design of Intelligent Systems. CRC Press.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TEAM ═══════════════════════════ -->
+<section id="team" class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">The Team</span>
+      <h2 class="section-title">Meet the People Behind This</h2>
+      <p class="section-desc">The minds that built, guided, and supervised this neuro-fuzzy screening system.</p>
+    </div>
+
+    <div class="team-grid">
+
+      <!-- Students -->
+      <div class="team-card team-card--student">
+        <div class="team-avatar">
+          <span class="avatar-initials">JW</span>
+          <div class="avatar-ring"></div>
+        </div>
+        <div class="team-badge">Developer</div>
+        <h3 class="team-name">Jana Walid Eleskandrany</h3>
+        <p class="team-role">Model Architecture · Fuzzy Logic · Backend</p>
+        <div class="team-tags">
+          <span>TensorFlow</span><span>Flask</span><span>NumPy</span>
+        </div>
+      </div>
+
+      <div class="team-card team-card--student">
+        <div class="team-avatar">
+          <span class="avatar-initials">RM</span>
+          <div class="avatar-ring"></div>
+        </div>
+        <div class="team-badge">Developer</div>
+        <h3 class="team-name">Raneem Mohamed Mabrouk</h3>
+        <p class="team-role">CNN · Documentation · Testing</p>
+        <div class="team-tags">
+          <span>Analysis</span><span>Research</span><span>QA</span>
+        </div>
+      </div>
+
+      <!-- TA -->
+      <div class="team-card team-card--ta">
+        <div class="team-avatar team-avatar--ta">
+          <span class="avatar-initials">IE</span>
+          <div class="avatar-ring"></div>
+        </div>
+        <div class="team-badge team-badge--ta">Teaching Assistant</div>
+        <h3 class="team-name">Eng. Ibrahim El Gazar</h3>
+        <p class="team-role">Technical Guidance & Project Supervision</p>
+        <div class="team-tags">
+          <span>Soft Computing</span><span>Mentorship</span>
+        </div>
+      </div>
+
+      <!-- Prof -->
+      <div class="team-card team-card--prof">
+        <div class="team-avatar team-avatar--prof">
+          <span class="avatar-initials">MN</span>
+          <div class="avatar-ring"></div>
+        </div>
+        <div class="team-badge team-badge--prof">Course Lecturer</div>
+        <h3 class="team-name">Prof. Mona Nagy El Bedwehy</h3>
+        <p class="team-role">Academic Supervision · Soft Computing</p>
+        <div class="team-tags">
+          <span>AI</span><span>Fuzzy Systems</span><span>Academia</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
